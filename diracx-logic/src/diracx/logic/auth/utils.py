@@ -174,7 +174,7 @@ async def get_token_from_iam(
         if res.status_code >= 500:
             raise IAMServerError("Failed to contact IAM server")
         elif res.status_code >= 400:
-            print(f"CHRIS {res.status_code=} {res}")
+            print(f"RUSLAN {res.status_code=} {res.text=} {res.json()=}")
             raise IAMClientError("Failed to contact IAM server")
 
     raw_id_token = res.json()["id_token"]
