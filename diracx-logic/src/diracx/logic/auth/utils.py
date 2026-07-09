@@ -165,7 +165,7 @@ async def get_token_from_iam(
         "code_verifier": state["code_verifier"],
         "redirect_uri": redirect_uri,
     }
-
+    print(f"RUSLAN {data=}")
     async with httpx2.AsyncClient() as c:
         res = await c.post(
             token_endpoint,
