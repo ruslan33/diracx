@@ -144,6 +144,12 @@ async def initiate_authorization_flow_with_iam(
         f"state={encrypted_state}",
     ]
     authorization_flow_url = f"{authorization_endpoint}?{'&'.join(url_params)}"
+    print(
+        f"RUSLAN authorize step: {vo=} "
+        f"client_id={config.registry[vo].idp.client_id!r} "
+        f"{redirect_uri=} {code_verifier=} {code_challenge=}"
+    )
+    print(f"RUSLAN {authorization_flow_url=}")
     return authorization_flow_url
 
 
@@ -165,16 +171,21 @@ async def get_token_from_iam(
         "code_verifier": state["code_verifier"],
         "redirect_uri": redirect_uri,
     }
-    print(f"RUSLAN {data=}")
+    print(f"RUSLAN token step: {token_endpoint=} {data=}")
     async with httpx2.AsyncClient() as c:
         res = await c.post(
             token_endpoint,
             data=data,
         )
+        print(
+            f"RUSLAN token response: {res.status_code=} "
+            f"request_headers={dict(res.request.headers)} "
+            f"response_headers={dict(res.headers)} "
+            f"{res.text=}"
+        )
         if res.status_code >= 500:
             raise IAMServerError("Failed to contact IAM server")
         elif res.status_code >= 400:
-            print(f"RUSLAN {res.status_code=} {res.text=} {res.json()=}")
             raise IAMClientError("Failed to contact IAM server")
 
     raw_id_token = res.json()["id_token"]
